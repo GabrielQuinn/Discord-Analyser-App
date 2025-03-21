@@ -80,6 +80,15 @@ const RPSChoices = {
   },
 };
 
+const FetchRPSChoices = {
+  server: {
+    description: 'uses current channel ID'
+  },
+  user: {
+    description: 'enter a user (finish this later)'
+  }
+};
+
 export function getRPSChoices() {
   return Object.keys(RPSChoices);
 }
@@ -95,7 +104,24 @@ export function getShuffledOptions() {
     options.push({
       label: capitalize(c),
       value: c.toLowerCase(),
-      description: RPSChoices[c]['description'],
+      description: ChallengeRPSChoices[c]['description'],
+    });
+  }
+
+  return options.sort(() => Math.random() - 0.5);
+}
+
+export function getShuffledOptions2(object) {
+  const allChoices = object;
+  const options = [];
+
+  for (let c of allChoices) {
+    // Formatted for select menus
+    // https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure
+    options.push({
+      label: capitalize(c),
+      value: c.toLowerCase(),
+      description: ChallengeRPSChoices[c]['description'],
     });
   }
 
