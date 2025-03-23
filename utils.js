@@ -2,7 +2,6 @@ import 'dotenv/config';
 
 export async function DiscordRequest(endpoint, options) {
   // append endpoint to root API URL
-  console.log(endpoint);
   const url = 'https://discord.com/api/v10/' + endpoint;
   // Stringify payloads
   if (options.body) options.body = JSON.stringify(options.body);
@@ -39,10 +38,25 @@ export async function InstallGlobalCommands(appId, commands) {
 
 // Gets all messages in the server
 export async function GetMessages(id, msgCount) {
-  let endpoint = `channels/${id}/messages?limit=${msgCount}`; // make this better later
-  let response = await DiscordRequest(endpoint, {method: 'GET'});
-  let messages = await response.json();
+  const endpoint = `channels/${id}/messages?limit=${msgCount}`; // make this better later
+  const response = await DiscordRequest(endpoint, {method: 'GET'});
+  const messages = await response.json();
   return messages;
+}
+
+export async function ExtractJSONValues(array) {
+  let new_array = [];
+  for (let i=0; i<array.length; i++) {
+    new_array.push(
+      {
+        "name": array[i].author.global_name,
+        "id": array[i].id,
+        "timestamp": array[i].timestamp,
+        "content": array[i].content
+      }
+    );
+  }
+  return new_array;
 }
 
 // Simple method that returns a random emoji from list

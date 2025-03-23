@@ -8,8 +8,9 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { getRandomEmoji, DiscordRequest, GetMessages } from './utils.js';
+import { getRandomEmoji, DiscordRequest, GetMessages, ExtractJSONValues } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
+import { spawn } from 'child_process';
 
 // Create an express app
 const app = express();
@@ -25,11 +26,6 @@ const activeGames = {};
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
   // Interaction id, type and data
   const { id, type, data } = req.body;
-
-  /*console.log(req);
-  console.log(req.body);
-  console.log(Object.keys(req));
-  console.log(Object.keys(req.body));*/
 
   /**
    * Handle verification requests
@@ -63,19 +59,17 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
       const channel_id = req.body.channel_id;
       const messages = await GetMessages(channel_id, 100);
+      const filteredMessages = ExtractJSONValues(messages);
 
-      /* IMPORTANT KEYS:
+      // run python program here
+      const python_process = spawn("python");
 
-        - content
-        - timestamp
-        - embeds (?) -- not sure if this includes gifs. if not, i can just have a function to filter it out before being used
+      python_process.stdin.write(JSON.stringify(filteredMessages));
+      python_process.stdin.end();
 
-        * determine which one would be better:
-        - author/username
-        - author/global_name
-        probably username cuz then the prompt input can be @user and then just remove the @
-
-      */
+      python_process.stdout.on("data", (data) => {
+        console.log(`data received as "${data.toString().trim()}"`); // receive data here
+      });
 
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
