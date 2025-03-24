@@ -53,17 +53,40 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       });
     }
 
-    // "fetch" command
-    if (name === 'fetch') {
-      console.log("Fetch command triggered!");
+    // "id" command
+    if (name === 'id') {
+
+      // LOOK AT THE FUNCTION IN CHALLENGE COMMAND AND ADD SOMETHING SIMILAR SO U CAN SEE WHAT THE INPUT IS. 
+      // AFTER THAT, WRITE A FUNCTION TO FIND USER AND RETURN THEIR ID!!! THEN ADD THE ID TO
+      // THE CONTENT KEY BELOW!!!!!!
+
+      const input = req.body.data.options[0].value;
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: `${input}'s ID: ${getRandomEmoji()}`,
+        },
+      });
+    }
+
+    // "sentiment" command
+    if (name === 'sentiment') {
+      console.log("Sentiment command triggered!");
 
       const channel_id = req.body.channel_id;
-      const messages = await GetMessages(channel_id, 100);
+      const messages = await GetMessages(channel_id, 10);
       const filteredMessages = ExtractJSONValues(messages);
 
-      // run python program here
-      const python_process = spawn("python");
+      const input = req.body.data.options[0].value;
+      const user_id = req.body.member.user.id;
+      const command = name;
 
+      // run python program here
+      const python_process = spawn("python", ["main.py"]);
+
+      console.log(filteredMessages);
+      console.log(JSON.stringify(filteredMessages));
       python_process.stdin.write(JSON.stringify(filteredMessages));
       python_process.stdin.end();
 

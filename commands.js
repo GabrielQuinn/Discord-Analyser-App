@@ -26,21 +26,37 @@ const TEST_COMMAND = {
   contexts: [0, 1, 2],
 };
 
-// Fetch messages
-const FETCH_COMMAND = {
-  name: 'fetch',
-  description: 'Fetch channel messages',
+// Get ID command
+const GET_ID_COMMAND = {
+  name: 'id',
+  description: 'Return the ID of a user',
+  options: [
+    {
+      type: 3,
+      name: 'global_name',
+      description: 'Enter User Global Name',
+      required: true,
+    },
+  ],
+  type: 1,
+  integration_types: [0, 1],
+  contexts: [0, 2],
+};
+
+// Sentiment command
+const SENTIMENT_COMMAND = {
+  name: 'sentiment',
+  description: 'Sentiment analysis on server channel or user',
   options: [
     {
       type: 3,
       name: 'message_source',
-      description: 'Choose source to fetch messages',
+      description: 'Choose target',
       required: true,
       choices: 
-      //createCommandChoices(),
       [
-        { name: "Current Channel", value: "channel"},
-        { name: "Current User", value: "user"}
+        { name: "Channel ID", value: "channel"},
+        { name: "User ID", value: "user"}
       ],
     },
   ],
@@ -67,6 +83,11 @@ const CHALLENGE_COMMAND = {
   contexts: [0, 2],
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND, FETCH_COMMAND];
+const ALL_COMMANDS = [
+  TEST_COMMAND, 
+  CHALLENGE_COMMAND, 
+  SENTIMENT_COMMAND,
+  GET_ID_COMMAND
+];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
